@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "qnaapi-connect/form",
+	"title": "QNAAPI Form",
+	"category": "widgets",
+	"icon": "feedback",
+	"description": "Embed one of your QNAAPI forms or surveys.",
+	"textdomain": "qnaapi-connect",
+	"attributes": {
+		"identifier": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

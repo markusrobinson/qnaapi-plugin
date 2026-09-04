@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "qnaapi-connect/quiz",
+	"title": "QNAAPI Quiz",
+	"category": "widgets",
+	"icon": "forms",
+	"description": "Embed one of your QNAAPI quizzes.",
+	"textdomain": "qnaapi-connect",
+	"attributes": {
+		"identifier": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

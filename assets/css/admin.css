@@ -1,0 +1,47 @@
+.qnaapi-connect-repeater-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	margin: 0.35em 0;
+}
+
+.qnaapi-connect-question {
+	margin: 0 0 1.5em;
+	padding: 1em;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.qnaapi-connect-question legend {
+	font-weight: 600;
+	padding: 0 0.25em;
+}
+
+.qnaapi-connect-choices {
+	margin: 0.75em 0;
+}
+
+.qnaapi-connect-add-choice,
+.qnaapi-connect-remove-question {
+	margin-top: 0.5em;
+}
+
+.qnaapi-connect-dashboard-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.5em;
+	margin: 0 0 1em;
+	padding: 0;
+	list-style: none;
+}
+
+.qnaapi-connect-dashboard-stats li {
+	font-size: 0.95em;
+}
+
+.qnaapi-connect-dashboard-stats strong {
+	display: block;
+	font-size: 1.6em;
+	line-height: 1.2;
+}

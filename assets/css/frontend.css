@@ -1,0 +1,146 @@
+.qnaapi-widget {
+	max-width: 32rem;
+	margin: 1.5em 0;
+	padding: 1.25em 1.5em;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 8px;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.qnaapi-widget-title {
+	margin: 0 0 0.25em;
+	font-weight: 600;
+	font-size: 1.1em;
+}
+
+.qnaapi-widget-description {
+	margin: 0 0 1em;
+	opacity: 0.75;
+}
+
+.qnaapi-widget-submit {
+	margin-top: 0.75em;
+	padding: 0.5em 1.25em;
+	border: none;
+	border-radius: 6px;
+	background: currentColor;
+	cursor: pointer;
+}
+
+.qnaapi-widget-submit {
+	background-color: #1d4ed8;
+	color: #fff;
+}
+
+.qnaapi-widget-submit:hover {
+	background-color: #1e40af;
+}
+
+.qnaapi-widget-message {
+	margin-top: 0.75em;
+	min-height: 1.2em;
+	opacity: 0.8;
+}
+
+.qnaapi-widget-error {
+	color: #b42318;
+	font-size: 0.9em;
+}
+
+/* Polls */
+
+.qnaapi-poll-options {
+	list-style: none;
+	margin: 0 0 0.5em;
+	padding: 0;
+}
+
+.qnaapi-poll-options li {
+	margin: 0.4em 0;
+}
+
+.qnaapi-poll-result-row {
+	position: relative;
+	margin: 0.4em 0;
+	padding: 0.5em 0.75em;
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.05);
+	overflow: hidden;
+}
+
+.qnaapi-poll-result-bar {
+	position: absolute;
+	inset: 0;
+	background: rgba(29, 78, 216, 0.18);
+	z-index: 0;
+	transition: width 0.3s ease;
+}
+
+.qnaapi-poll-result-text {
+	position: relative;
+	z-index: 1;
+	font-size: 0.95em;
+}
+
+/* Quizzes */
+
+.qnaapi-quiz-question {
+	margin: 0 0 1.25em;
+	padding: 0;
+	border: none;
+}
+
+.qnaapi-quiz-question legend {
+	font-weight: 600;
+	margin-bottom: 0.4em;
+	padding: 0;
+}
+
+.qnaapi-quiz-choice {
+	display: block;
+	margin: 0.3em 0;
+}
+
+.qnaapi-quiz-result {
+	margin-top: 1em;
+	font-weight: 600;
+	font-size: 1.1em;
+}
+
+/* Forms */
+
+.qnaapi-form-field {
+	margin: 0 0 1em;
+}
+
+.qnaapi-form-field label {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 0.3em;
+}
+
+.qnaapi-form-field input[type="text"],
+.qnaapi-form-field input[type="email"],
+.qnaapi-form-field input[type="number"],
+.qnaapi-form-field input[type="date"],
+.qnaapi-form-field select,
+.qnaapi-form-field textarea {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	padding: 0.5em;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 6px;
+	font: inherit;
+}
+
+.qnaapi-form-multi-choice {
+	display: block;
+}
+
+.qnaapi-form-multi-choice label {
+	display: block;
+	font-weight: normal;
+	margin: 0.2em 0;
+}
