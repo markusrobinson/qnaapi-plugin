@@ -80,6 +80,18 @@ class QNAAPI_Connect_Resources_Admin {
 						<td><textarea id="qnaapi_poll_description" name="description" class="large-text" rows="2"></textarea></td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Spam protection', 'qnaapi-connect' ); ?></th>
+						<td>
+							<label>
+								<input type="checkbox" name="requires_captcha" value="1" />
+								<?php esc_html_e( 'Require captcha protection', 'qnaapi-connect' ); ?>
+							</label>
+							<p class="description">
+								<?php esc_html_e( 'Requires a valid Turnstile token before a vote is accepted. Needs a Turnstile secret key configured on your QNAAPI account first.', 'qnaapi-connect' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><?php esc_html_e( 'Options', 'qnaapi-connect' ); ?></th>
 						<td>
 							<div id="qnaapi-connect-poll-options">
@@ -132,6 +144,10 @@ class QNAAPI_Connect_Resources_Admin {
 			$payload['site_id'] = $this->default_site_id();
 		}
 
+		if ( ! empty( $_POST['requires_captcha'] ) ) {
+			$payload['requires_captcha'] = true;
+		}
+
 		$result = qnaapi_connect_client()->post( 'polls', $payload );
 
 		$this->redirect_after_create( 'qnaapi-connect-polls', $result );
@@ -164,6 +180,18 @@ class QNAAPI_Connect_Resources_Admin {
 					<tr>
 						<th scope="row"><label for="qnaapi_quiz_description"><?php esc_html_e( 'Description', 'qnaapi-connect' ); ?></label></th>
 						<td><textarea id="qnaapi_quiz_description" name="description" class="large-text" rows="2"></textarea></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Spam protection', 'qnaapi-connect' ); ?></th>
+						<td>
+							<label>
+								<input type="checkbox" name="requires_captcha" value="1" />
+								<?php esc_html_e( 'Require captcha protection', 'qnaapi-connect' ); ?>
+							</label>
+							<p class="description">
+								<?php esc_html_e( 'Requires a valid Turnstile token before an attempt is accepted. Needs a Turnstile secret key configured on your QNAAPI account first.', 'qnaapi-connect' ); ?>
+							</p>
+						</td>
 					</tr>
 				</table>
 
@@ -283,6 +311,10 @@ class QNAAPI_Connect_Resources_Admin {
 
 		if ( $this->default_site_id() ) {
 			$payload['site_id'] = $this->default_site_id();
+		}
+
+		if ( ! empty( $_POST['requires_captcha'] ) ) {
+			$payload['requires_captcha'] = true;
 		}
 
 		$result = qnaapi_connect_client()->post( 'quizzes', $payload );
