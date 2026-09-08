@@ -46,9 +46,10 @@ class QNAAPI_Connect_Settings {
 				'type'              => 'array',
 				'sanitize_callback' => array( $this, 'sanitize_options' ),
 				'default'           => array(
-					'api_key'  => '',
-					'base_url' => QNAAPI_CONNECT_DEFAULT_BASE_URL,
-					'site_id'  => '',
+					'api_key'            => '',
+					'base_url'           => QNAAPI_CONNECT_DEFAULT_BASE_URL,
+					'site_id'            => '',
+					'turnstile_site_key' => '',
 				),
 			)
 		);
@@ -58,11 +59,12 @@ class QNAAPI_Connect_Settings {
 		$existing = get_option( self::OPTION_KEY, array() );
 
 		return array(
-			'api_key'  => isset( $input['api_key'] ) ? sanitize_text_field( $input['api_key'] ) : ( $existing['api_key'] ?? '' ),
-			'base_url' => isset( $input['base_url'] ) && '' !== trim( $input['base_url'] )
+			'api_key'            => isset( $input['api_key'] ) ? sanitize_text_field( $input['api_key'] ) : ( $existing['api_key'] ?? '' ),
+			'base_url'           => isset( $input['base_url'] ) && '' !== trim( $input['base_url'] )
 				? esc_url_raw( untrailingslashit( trim( $input['base_url'] ) ) )
 				: QNAAPI_CONNECT_DEFAULT_BASE_URL,
-			'site_id'  => isset( $input['site_id'] ) ? sanitize_text_field( $input['site_id'] ) : '',
+			'site_id'            => isset( $input['site_id'] ) ? sanitize_text_field( $input['site_id'] ) : '',
+			'turnstile_site_key' => isset( $input['turnstile_site_key'] ) ? sanitize_text_field( $input['turnstile_site_key'] ) : '',
 		);
 	}
 
@@ -71,10 +73,11 @@ class QNAAPI_Connect_Settings {
 			return;
 		}
 
-		$options       = get_option( self::OPTION_KEY, array() );
-		$api_key       = $options['api_key'] ?? '';
-		$base_url      = $options['base_url'] ?? QNAAPI_CONNECT_DEFAULT_BASE_URL;
-		$site_id       = $options['site_id'] ?? '';
+		$options            = get_option( self::OPTION_KEY, array() );
+		$api_key            = $options['api_key'] ?? '';
+		$base_url           = $options['base_url'] ?? QNAAPI_CONNECT_DEFAULT_BASE_URL;
+		$site_id            = $options['site_id'] ?? '';
+		$turnstile_site_key = $options['turnstile_site_key'] ?? '';
 		$connection    = $api_key ? qnaapi_connect_client()->get( 'me' ) : null;
 		$is_connected  = $connection && ! is_wp_error( $connection );
 		$account_email = $is_connected && isset( $connection['body']['data']['email'] ) ? $connection['body']['data']['email'] : '';
@@ -151,6 +154,23 @@ class QNAAPI_Connect_Settings {
 							/>
 							<p class="description">
 								<?php esc_html_e( 'Optional. If your QNAAPI account groups resources by site, new polls/quizzes/forms created from this plugin are tagged with this site ID. Leave blank if you don\'t use sites, or if your key is already site-scoped.', 'qnaapi-connect' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="qnaapi_connect_turnstile_site_key"><?php esc_html_e( 'Turnstile Site Key', 'qnaapi-connect' ); ?></label>
+						</th>
+						<td>
+							<input
+								type="text"
+								id="qnaapi_connect_turnstile_site_key"
+								name="<?php echo esc_attr( self::OPTION_KEY ); ?>[turnstile_site_key]"
+								value="<?php echo esc_attr( $turnstile_site_key ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">
+								<?php esc_html_e( 'Optional — only needed if you\'ve enabled captcha protection on a poll/quiz/form from your QNAAPI dashboard. This is the public site key from your Cloudflare Turnstile widget (never the secret key, which stays on QNAAPI\'s own servers).', 'qnaapi-connect' ); ?>
 							</p>
 						</td>
 					</tr>

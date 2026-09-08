@@ -36,6 +36,17 @@ class QNAAPI_Connect_Assets {
 			true
 		);
 
+		// Cloudflare's own script — safe to load on any page with a QNAAPI
+		// widget even if that particular resource doesn't require captcha;
+		// Turnstile is a no-op with no `.cf-turnstile` div to attach to.
+		wp_enqueue_script(
+			'qnaapi-connect-turnstile',
+			'https://challenges.cloudflare.com/turnstile/v0/api.js',
+			array(),
+			null,
+			true
+		);
+
 		$options = get_option( 'qnaapi_connect_options', array() );
 
 		wp_localize_script(

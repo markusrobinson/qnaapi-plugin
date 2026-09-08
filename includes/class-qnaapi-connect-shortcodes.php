@@ -68,6 +68,7 @@ class QNAAPI_Connect_Shortcodes {
 						</li>
 					<?php endforeach; ?>
 				</ul>
+				<?php $this->render_turnstile_widget( $poll ); ?>
 				<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Vote', 'qnaapi-connect' ); ?></button>
 			</form>
 			<div class="qnaapi-poll-results" hidden></div>
@@ -129,6 +130,7 @@ class QNAAPI_Connect_Shortcodes {
 					</fieldset>
 				<?php endforeach; ?>
 
+				<?php $this->render_turnstile_widget( $quiz ); ?>
 				<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Submit', 'qnaapi-connect' ); ?></button>
 			</form>
 			<div class="qnaapi-quiz-result" hidden></div>
@@ -171,12 +173,33 @@ class QNAAPI_Connect_Shortcodes {
 					</p>
 				<?php endforeach; ?>
 
+				<?php $this->render_turnstile_widget( $form ); ?>
 				<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Submit', 'qnaapi-connect' ); ?></button>
 			</form>
 			<p class="qnaapi-widget-message" role="status" aria-live="polite"></p>
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Render a Cloudflare Turnstile widget when the resource requires
+	 * captcha protection. Only the public site key is ever exposed here —
+	 * the secret key never leaves QNAAPI's own servers.
+	 */
+	private function render_turnstile_widget( $resource ) {
+		if ( empty( $resource['requires_captcha'] ) ) {
+			return;
+		}
+
+		$options  = get_option( 'qnaapi_connect_options', array() );
+		$site_key = isset( $options['turnstile_site_key'] ) ? $options['turnstile_site_key'] : '';
+
+		if ( '' === $site_key ) {
+			return;
+		}
+
+		printf( '<div class="cf-turnstile" data-sitekey="%s"></div>', esc_attr( $site_key ) );
 	}
 
 	private function render_field_input( $field ) {

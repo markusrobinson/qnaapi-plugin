@@ -59,6 +59,15 @@
 			} );
 	}
 
+	function captchaToken( form ) {
+		// Present only when the widget rendered a Cloudflare Turnstile div
+		// (i.e. the resource has requires_captcha set) — Turnstile injects
+		// this hidden input as a child of that div once the challenge
+		// completes.
+		var tokenInput = form.querySelector( '[name="cf-turnstile-response"]' );
+		return tokenInput ? tokenInput.value : null;
+	}
+
 	function setMessage( widget, text ) {
 		var message = widget.querySelector( '.qnaapi-widget-message' );
 		if ( message ) {
@@ -93,10 +102,16 @@
 
 			setMessage( widget, config.i18n.voting || '' );
 
-			postJson( '/polls/' + pollId + '/votes', {
+			var body = {
 				poll_option_id: parseInt( selected.value, 10 ),
 				voter_identifier: voterId(),
-			} ).then( function ( result ) {
+			};
+			var token = captchaToken( form );
+			if ( token ) {
+				body.captcha_token = token;
+			}
+
+			postJson( '/polls/' + pollId + '/votes', body ).then( function ( result ) {
 				if ( result.ok || 409 === result.status ) {
 					markResponded( 'poll', pollId );
 
@@ -194,10 +209,16 @@
 
 			setMessage( widget, config.i18n.quizSubmitting || '' );
 
-			postJson( '/quizzes/' + quizId + '/attempts', {
+			var body = {
 				taker_identifier: voterId(),
 				answers: answers,
-			} ).then( function ( result ) {
+			};
+			var token = captchaToken( form );
+			if ( token ) {
+				body.captcha_token = token;
+			}
+
+			postJson( '/quizzes/' + quizId + '/attempts', body ).then( function ( result ) {
 				if ( result.ok ) {
 					markResponded( 'quiz', quizId );
 					form.hidden = true;
@@ -248,10 +269,16 @@
 
 			setMessage( widget, config.i18n.formSubmitting || '' );
 
-			postJson( '/forms/' + formId + '/submissions', {
+			var body = {
 				respondent_identifier: voterId(),
 				answers: answers,
-			} ).then( function ( result ) {
+			};
+			var token = captchaToken( form );
+			if ( token ) {
+				body.captcha_token = token;
+			}
+
+			postJson( '/forms/' + formId + '/submissions', body ).then( function ( result ) {
 				if ( result.ok ) {
 					form.hidden = true;
 					setMessage( widget, config.i18n.formSubmitted || '' );
