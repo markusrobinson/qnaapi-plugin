@@ -75,6 +75,22 @@
 		}
 	}
 
+	/**
+	 * The best available message for a failed submit: the specific
+	 * "closed" validation error QNAAPI returns once a poll/quiz/form has
+	 * been closed or capped out since this page was rendered (the widget
+	 * itself is re-fetched server-side at most every 5 minutes, so a
+	 * still-open-looking form can occasionally submit into one that just
+	 * closed), falling back to the API's generic message, then a
+	 * plugin-wide default.
+	 */
+	function errorMessage( result ) {
+		var body = result && result.body;
+		var closedError = body && body.errors && body.errors.closed;
+
+		return ( closedError && closedError[ 0 ] ) || ( body && body.message ) || config.i18n.genericError || '';
+	}
+
 	/* ----------------------------- Polls ----------------------------- */
 
 	function initPoll( widget ) {
@@ -122,7 +138,7 @@
 					showPollResults( widget );
 					setMessage( widget, 409 === result.status ? config.i18n.alreadyVoted || '' : config.i18n.voted || '' );
 				} else {
-					setMessage( widget, ( result.body && result.body.message ) || config.i18n.genericError || '' );
+					setMessage( widget, errorMessage( result ) );
 				}
 			} );
 		} );
@@ -236,7 +252,7 @@
 					form.hidden = true;
 					setMessage( widget, config.i18n.quizAlreadyDone || '' );
 				} else {
-					setMessage( widget, ( result.body && result.body.message ) || config.i18n.genericError || '' );
+					setMessage( widget, errorMessage( result ) );
 				}
 			} );
 		} );
@@ -283,7 +299,7 @@
 					form.hidden = true;
 					setMessage( widget, config.i18n.formSubmitted || '' );
 				} else {
-					setMessage( widget, ( result.body && result.body.message ) || config.i18n.genericError || '' );
+					setMessage( widget, errorMessage( result ) );
 				}
 			} );
 		} );

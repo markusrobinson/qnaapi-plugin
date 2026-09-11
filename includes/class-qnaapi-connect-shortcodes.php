@@ -42,37 +42,42 @@ class QNAAPI_Connect_Shortcodes {
 			return $this->render_error( $poll );
 		}
 
-		$options = isset( $poll['options'] ) ? $poll['options'] : array();
+		$options   = isset( $poll['options'] ) ? $poll['options'] : array();
+		$is_closed = $this->is_closed_to_new_responses( $poll );
 
 		ob_start();
 		?>
 		<div class="qnaapi-widget qnaapi-poll" data-qnaapi-type="poll" data-qnaapi-id="<?php echo esc_attr( $poll['id'] ); ?>">
-			<form class="qnaapi-poll-form">
-				<p class="qnaapi-widget-title"><?php echo esc_html( $poll['title'] ); ?></p>
-				<?php if ( ! empty( $poll['description'] ) ) : ?>
-					<p class="qnaapi-widget-description"><?php echo esc_html( $poll['description'] ); ?></p>
-				<?php endif; ?>
-				<ul class="qnaapi-poll-options">
-					<?php foreach ( $options as $option ) : ?>
-						<li>
-							<label>
-								<input
-									type="radio"
-									name="qnaapi_poll_option"
-									value="<?php echo esc_attr( $option['id'] ); ?>"
-									data-votes="<?php echo esc_attr( isset( $option['votes_count'] ) ? (int) $option['votes_count'] : 0 ); ?>"
-									required
-								/>
-								<span class="qnaapi-poll-option-label"><?php echo esc_html( $option['label'] ); ?></span>
-							</label>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-				<?php $this->render_turnstile_widget( $poll ); ?>
-				<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Vote', 'qnaapi-connect' ); ?></button>
-			</form>
-			<div class="qnaapi-poll-results" hidden></div>
-			<p class="qnaapi-widget-message" role="status" aria-live="polite"></p>
+			<p class="qnaapi-widget-title"><?php echo esc_html( $poll['title'] ); ?></p>
+			<?php if ( ! empty( $poll['description'] ) ) : ?>
+				<p class="qnaapi-widget-description"><?php echo esc_html( $poll['description'] ); ?></p>
+			<?php endif; ?>
+			<?php if ( $is_closed ) : ?>
+				<p class="qnaapi-widget-closed"><?php esc_html_e( 'This poll is closed and no longer accepting votes.', 'qnaapi-connect' ); ?></p>
+			<?php else : ?>
+				<form class="qnaapi-poll-form">
+					<ul class="qnaapi-poll-options">
+						<?php foreach ( $options as $option ) : ?>
+							<li>
+								<label>
+									<input
+										type="radio"
+										name="qnaapi_poll_option"
+										value="<?php echo esc_attr( $option['id'] ); ?>"
+										data-votes="<?php echo esc_attr( isset( $option['votes_count'] ) ? (int) $option['votes_count'] : 0 ); ?>"
+										required
+									/>
+									<span class="qnaapi-poll-option-label"><?php echo esc_html( $option['label'] ); ?></span>
+								</label>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+					<?php $this->render_turnstile_widget( $poll ); ?>
+					<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Vote', 'qnaapi-connect' ); ?></button>
+				</form>
+				<div class="qnaapi-poll-results" hidden></div>
+				<p class="qnaapi-widget-message" role="status" aria-live="polite"></p>
+			<?php endif; ?>
 		</div>
 		<?php
 		return ob_get_clean();
@@ -92,49 +97,53 @@ class QNAAPI_Connect_Shortcodes {
 		}
 
 		$questions = isset( $quiz['questions'] ) ? $quiz['questions'] : array();
+		$is_closed = $this->is_closed_to_new_responses( $quiz );
 
 		ob_start();
 		?>
 		<div class="qnaapi-widget qnaapi-quiz" data-qnaapi-type="quiz" data-qnaapi-id="<?php echo esc_attr( $quiz['id'] ); ?>">
-			<form class="qnaapi-quiz-form">
-				<p class="qnaapi-widget-title"><?php echo esc_html( $quiz['title'] ); ?></p>
-				<?php if ( ! empty( $quiz['description'] ) ) : ?>
-					<p class="qnaapi-widget-description"><?php echo esc_html( $quiz['description'] ); ?></p>
-				<?php endif; ?>
+			<p class="qnaapi-widget-title"><?php echo esc_html( $quiz['title'] ); ?></p>
+			<?php if ( ! empty( $quiz['description'] ) ) : ?>
+				<p class="qnaapi-widget-description"><?php echo esc_html( $quiz['description'] ); ?></p>
+			<?php endif; ?>
+			<?php if ( $is_closed ) : ?>
+				<p class="qnaapi-widget-closed"><?php esc_html_e( 'This quiz is closed and no longer accepting attempts.', 'qnaapi-connect' ); ?></p>
+			<?php else : ?>
+				<form class="qnaapi-quiz-form">
+					<?php foreach ( $questions as $question ) : ?>
+						<?php
+						$choices       = isset( $question['choices'] ) ? $question['choices'] : array();
+						$correct_count = count(
+							array_filter(
+								$choices,
+								function ( $choice ) {
+									return ! empty( $choice['is_correct'] );
+								}
+							)
+						);
+						$input_type = 1 === $correct_count ? 'radio' : 'checkbox';
+						?>
+						<fieldset class="qnaapi-quiz-question" data-question-id="<?php echo esc_attr( $question['id'] ); ?>">
+							<legend><?php echo esc_html( $question['prompt'] ); ?></legend>
+							<?php foreach ( $choices as $choice ) : ?>
+								<label class="qnaapi-quiz-choice">
+									<input
+										type="<?php echo esc_attr( $input_type ); ?>"
+										name="qnaapi_question_<?php echo esc_attr( $question['id'] ); ?>"
+										value="<?php echo esc_attr( $choice['id'] ); ?>"
+									/>
+									<?php echo esc_html( $choice['label'] ); ?>
+								</label>
+							<?php endforeach; ?>
+						</fieldset>
+					<?php endforeach; ?>
 
-				<?php foreach ( $questions as $question ) : ?>
-					<?php
-					$choices       = isset( $question['choices'] ) ? $question['choices'] : array();
-					$correct_count = count(
-						array_filter(
-							$choices,
-							function ( $choice ) {
-								return ! empty( $choice['is_correct'] );
-							}
-						)
-					);
-					$input_type = 1 === $correct_count ? 'radio' : 'checkbox';
-					?>
-					<fieldset class="qnaapi-quiz-question" data-question-id="<?php echo esc_attr( $question['id'] ); ?>">
-						<legend><?php echo esc_html( $question['prompt'] ); ?></legend>
-						<?php foreach ( $choices as $choice ) : ?>
-							<label class="qnaapi-quiz-choice">
-								<input
-									type="<?php echo esc_attr( $input_type ); ?>"
-									name="qnaapi_question_<?php echo esc_attr( $question['id'] ); ?>"
-									value="<?php echo esc_attr( $choice['id'] ); ?>"
-								/>
-								<?php echo esc_html( $choice['label'] ); ?>
-							</label>
-						<?php endforeach; ?>
-					</fieldset>
-				<?php endforeach; ?>
-
-				<?php $this->render_turnstile_widget( $quiz ); ?>
-				<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Submit', 'qnaapi-connect' ); ?></button>
-			</form>
-			<div class="qnaapi-quiz-result" hidden></div>
-			<p class="qnaapi-widget-message" role="status" aria-live="polite"></p>
+					<?php $this->render_turnstile_widget( $quiz ); ?>
+					<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Submit', 'qnaapi-connect' ); ?></button>
+				</form>
+				<div class="qnaapi-quiz-result" hidden></div>
+				<p class="qnaapi-widget-message" role="status" aria-live="polite"></p>
+			<?php endif; ?>
 		</div>
 		<?php
 		return ob_get_clean();
@@ -153,33 +162,49 @@ class QNAAPI_Connect_Shortcodes {
 			return $this->render_error( $form );
 		}
 
-		$fields = isset( $form['fields'] ) ? $form['fields'] : array();
+		$fields    = isset( $form['fields'] ) ? $form['fields'] : array();
+		$is_closed = $this->is_closed_to_new_responses( $form );
 
 		ob_start();
 		?>
 		<div class="qnaapi-widget qnaapi-form" data-qnaapi-type="form" data-qnaapi-id="<?php echo esc_attr( $form['id'] ); ?>">
-			<form class="qnaapi-form-form">
-				<p class="qnaapi-widget-title"><?php echo esc_html( $form['title'] ); ?></p>
-				<?php if ( ! empty( $form['description'] ) ) : ?>
-					<p class="qnaapi-widget-description"><?php echo esc_html( $form['description'] ); ?></p>
-				<?php endif; ?>
+			<p class="qnaapi-widget-title"><?php echo esc_html( $form['title'] ); ?></p>
+			<?php if ( ! empty( $form['description'] ) ) : ?>
+				<p class="qnaapi-widget-description"><?php echo esc_html( $form['description'] ); ?></p>
+			<?php endif; ?>
+			<?php if ( $is_closed ) : ?>
+				<p class="qnaapi-widget-closed"><?php esc_html_e( 'This form is closed and no longer accepting submissions.', 'qnaapi-connect' ); ?></p>
+			<?php else : ?>
+				<form class="qnaapi-form-form">
+					<?php foreach ( $fields as $field ) : ?>
+						<p class="qnaapi-form-field" data-field-id="<?php echo esc_attr( $field['id'] ); ?>" data-field-type="<?php echo esc_attr( $field['type'] ); ?>">
+							<label>
+								<?php echo esc_html( $field['label'] ); ?><?php echo empty( $field['required'] ) ? '' : ' *'; ?>
+								<?php echo $this->render_field_input( $field ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside render_field_input(). ?>
+							</label>
+						</p>
+					<?php endforeach; ?>
 
-				<?php foreach ( $fields as $field ) : ?>
-					<p class="qnaapi-form-field" data-field-id="<?php echo esc_attr( $field['id'] ); ?>" data-field-type="<?php echo esc_attr( $field['type'] ); ?>">
-						<label>
-							<?php echo esc_html( $field['label'] ); ?><?php echo empty( $field['required'] ) ? '' : ' *'; ?>
-							<?php echo $this->render_field_input( $field ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside render_field_input(). ?>
-						</label>
-					</p>
-				<?php endforeach; ?>
-
-				<?php $this->render_turnstile_widget( $form ); ?>
-				<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Submit', 'qnaapi-connect' ); ?></button>
-			</form>
-			<p class="qnaapi-widget-message" role="status" aria-live="polite"></p>
+					<?php $this->render_turnstile_widget( $form ); ?>
+					<button type="submit" class="qnaapi-widget-submit"><?php esc_html_e( 'Submit', 'qnaapi-connect' ); ?></button>
+				</form>
+				<p class="qnaapi-widget-message" role="status" aria-live="polite"></p>
+			<?php endif; ?>
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Whether a poll/quiz/form should be treated as closed to new
+	 * votes/attempts/submissions — manually closed, or its response_limit
+	 * has been reached (QNAAPI computes both into this one flag). A
+	 * missing key (an older cached transient, or a QNAAPI account not yet
+	 * upgraded to a version that sends it) is treated as still open rather
+	 * than erroring.
+	 */
+	private function is_closed_to_new_responses( $resource ) {
+		return array_key_exists( 'is_accepting_responses', $resource ) && ! $resource['is_accepting_responses'];
 	}
 
 	/**
