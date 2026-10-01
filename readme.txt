@@ -4,7 +4,7 @@ Tags: polls, quizzes, forms, surveys, api
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,9 @@ QNAAPI Connect links your WordPress site to your [QNAAPI](https://qnaapi.com) ac
 * Create polls and quizzes on the fly from a dedicated wp-admin screen — no API calls to write yourself.
 * `[qnaapi_poll identifier="..."]`, `[qnaapi_quiz identifier="..."]`, and `[qnaapi_form identifier="..."]` shortcodes to embed any poll, quiz, or form/survey on your QNAAPI account.
 * Matching Gutenberg blocks (QNAAPI Poll, QNAAPI Quiz, QNAAPI Form) with a live editor preview.
-* A wp-admin dashboard widget showing live poll/quiz/form counts and total votes cast.
+* Define audience traits (**QNAAPI → Traits**) — the attributes your polls, quizzes, and forms write to a respondent's profile.
+* Browse respondent profiles and their computed traits (**QNAAPI → Profiles**) without leaving wp-admin.
+* A wp-admin dashboard widget showing live poll/quiz/form counts, total votes cast, traits defined, and respondent profiles.
 * Voting, quiz attempts, and form submissions are handled entirely client-side against QNAAPI's public endpoints — your API key never reaches visitors' browsers.
 
 **Requirements**
@@ -49,6 +51,10 @@ Not yet — forms/surveys are embeddable via the shortcode and block, but are cu
 
 No. The plugin's PHP only fetches the poll/quiz/form's definition (using your API key) to render it. Casting a vote, submitting a quiz attempt, or submitting a form happens directly from the visitor's browser to QNAAPI's public API — your API key is never sent to or exposed in the visitor's browser.
 
+= Can I map a poll option or form field to a trait from wp-admin? =
+
+Not yet — you can define the trait itself from **QNAAPI → Traits**, but mapping a specific option/choice/field (or a whole poll/quiz/form) to it is done from the QNAAPI dashboard. The **QNAAPI → Profiles** screen shows the resulting computed traits for each respondent.
+
 == Screenshots ==
 
 1. The Polls admin screen — create a poll and copy its shortcode.
@@ -57,10 +63,18 @@ No. The plugin's PHP only fetches the poll/quiz/form's definition (using your AP
 
 == Changelog ==
 
+= 0.2.0 =
+* Add a Traits admin screen (**QNAAPI → Traits**) to create, list, and archive trait definitions.
+* Add a Profiles admin screen (**QNAAPI → Profiles**) to browse respondents and the traits computed for them.
+* Add traits-defined and respondent-profile counts to the dashboard widget.
+
 = 0.1.0 =
 * Initial release: settings, poll/quiz creation, shortcodes, blocks, and a dashboard widget.
 
 == Upgrade Notice ==
+
+= 0.2.0 =
+Adds trait and profile management screens — no breaking changes.
 
 = 0.1.0 =
 Initial release.

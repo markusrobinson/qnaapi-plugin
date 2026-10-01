@@ -45,3 +45,27 @@
 	font-size: 1.6em;
 	line-height: 1.2;
 }
+
+.qnaapi-connect-profile-traits {
+	max-width: 600px;
+}
+
+.qnaapi-connect-pagination {
+	margin-top: 1em;
+}
+
+.qnaapi-connect-pagination .page-numbers {
+	display: inline-block;
+	padding: 0.35em 0.7em;
+	margin-right: 0.25em;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+	text-decoration: none;
+}
+
+.qnaapi-connect-pagination .page-numbers.current {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+}

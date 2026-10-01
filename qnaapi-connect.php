@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       QNAAPI Connect
  * Plugin URI:        https://qnaapi.com
- * Description:       Create and embed polls, quizzes, and forms/surveys powered by QNAAPI — shortcodes, Gutenberg blocks, and a wp-admin dashboard widget included.
- * Version:           0.1.0
+ * Description:       Create and embed polls, quizzes, and forms/surveys powered by QNAAPI — shortcodes, Gutenberg blocks, audience traits/profiles, and a wp-admin dashboard widget included.
+ * Version:           0.2.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            QNAAPI
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'QNAAPI_CONNECT_VERSION', '0.1.0' );
+define( 'QNAAPI_CONNECT_VERSION', '0.2.0' );
 define( 'QNAAPI_CONNECT_FILE', __FILE__ );
 define( 'QNAAPI_CONNECT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'QNAAPI_CONNECT_URL', plugin_dir_url( __FILE__ ) );
@@ -27,6 +27,8 @@ define( 'QNAAPI_CONNECT_DEFAULT_BASE_URL', 'https://qnaapi.com/api/v1' );
 require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-client.php';
 require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-settings.php';
 require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-resources-admin.php';
+require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-traits-admin.php';
+require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-profiles-admin.php';
 require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-shortcodes.php';
 require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-blocks.php';
 require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-dashboard-widget.php';
@@ -39,6 +41,8 @@ require_once QNAAPI_CONNECT_DIR . 'includes/class-qnaapi-connect-assets.php';
 function qnaapi_connect_boot() {
 	new QNAAPI_Connect_Settings();
 	new QNAAPI_Connect_Resources_Admin();
+	new QNAAPI_Connect_Traits_Admin();
+	new QNAAPI_Connect_Profiles_Admin();
 	new QNAAPI_Connect_Shortcodes();
 	new QNAAPI_Connect_Blocks();
 	new QNAAPI_Connect_Dashboard_Widget();
