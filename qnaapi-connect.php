@@ -3,7 +3,7 @@
  * Plugin Name:       QNAAPI Connect
  * Plugin URI:        https://qnaapi.com
  * Description:       Create and embed polls, quizzes, and forms/surveys powered by QNAAPI — shortcodes, Gutenberg blocks, audience traits/profiles, and a wp-admin dashboard widget included.
- * Version:           0.2.0
+ * Version:           0.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            QNAAPI
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'QNAAPI_CONNECT_VERSION', '0.2.0' );
+define( 'QNAAPI_CONNECT_VERSION', '0.3.0' );
 define( 'QNAAPI_CONNECT_FILE', __FILE__ );
 define( 'QNAAPI_CONNECT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'QNAAPI_CONNECT_URL', plugin_dir_url( __FILE__ ) );

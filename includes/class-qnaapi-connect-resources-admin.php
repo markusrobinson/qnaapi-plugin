@@ -1,9 +1,8 @@
 <?php
 /**
- * wp-admin screens for creating polls and quizzes "on the fly" — without
- * ever leaving WordPress — and listing/deleting the ones already on the
- * connected QNAAPI account. Forms are embeddable (see the shortcodes and
- * blocks classes) but are not yet creatable from here.
+ * wp-admin screens for creating polls, quizzes, and forms "on the fly" —
+ * without ever leaving WordPress — and listing/deleting the ones already on
+ * the connected QNAAPI account.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,6 +15,7 @@ class QNAAPI_Connect_Resources_Admin {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_post_qnaapi_connect_create_poll', array( $this, 'handle_create_poll' ) );
 		add_action( 'admin_post_qnaapi_connect_create_quiz', array( $this, 'handle_create_quiz' ) );
+		add_action( 'admin_post_qnaapi_connect_create_form', array( $this, 'handle_create_form' ) );
 		add_action( 'admin_post_qnaapi_connect_delete_resource', array( $this, 'handle_delete_resource' ) );
 	}
 
@@ -36,6 +36,15 @@ class QNAAPI_Connect_Resources_Admin {
 			'manage_options',
 			'qnaapi-connect-quizzes',
 			array( $this, 'render_quizzes_page' )
+		);
+
+		add_submenu_page(
+			'qnaapi-connect',
+			__( 'Forms', 'qnaapi-connect' ),
+			__( 'Forms', 'qnaapi-connect' ),
+			'manage_options',
+			'qnaapi-connect-forms',
+			array( $this, 'render_forms_page' )
 		);
 	}
 
@@ -323,6 +332,181 @@ class QNAAPI_Connect_Resources_Admin {
 	}
 
 	/* ---------------------------------------------------------------
+	 * Forms
+	 * ------------------------------------------------------------- */
+
+	/** @var array<string,string> field type value => label. */
+	const FIELD_TYPES = array(
+		'text'          => 'Text',
+		'textarea'      => 'Paragraph text',
+		'number'        => 'Number',
+		'email'         => 'Email',
+		'date'          => 'Date',
+		'single_choice' => 'Single choice',
+		'multi_choice'  => 'Multiple choice',
+		'rating'        => 'Rating (1-5)',
+	);
+
+	/** @var string[] Field types that use the "Options" textarea. */
+	const CHOICE_FIELD_TYPES = array( 'single_choice', 'multi_choice' );
+
+	public function render_forms_page() {
+		$this->require_capability();
+
+		$client = qnaapi_connect_client();
+		$forms  = $client->has_api_key() ? $client->get( 'forms' ) : null;
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Forms', 'qnaapi-connect' ); ?></h1>
+			<?php $this->render_connection_notice( $client ); ?>
+
+			<h2><?php esc_html_e( 'Create a new form', 'qnaapi-connect' ); ?></h2>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="qnaapi-connect-form">
+				<?php wp_nonce_field( 'qnaapi_connect_create_form' ); ?>
+				<input type="hidden" name="action" value="qnaapi_connect_create_form" />
+
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="qnaapi_form_title"><?php esc_html_e( 'Title', 'qnaapi-connect' ); ?></label></th>
+						<td><input type="text" id="qnaapi_form_title" name="title" class="regular-text" required /></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="qnaapi_form_description"><?php esc_html_e( 'Description', 'qnaapi-connect' ); ?></label></th>
+						<td><textarea id="qnaapi_form_description" name="description" class="large-text" rows="2"></textarea></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Spam protection', 'qnaapi-connect' ); ?></th>
+						<td>
+							<label>
+								<input type="checkbox" name="requires_captcha" value="1" />
+								<?php esc_html_e( 'Require captcha protection', 'qnaapi-connect' ); ?>
+							</label>
+							<p class="description">
+								<?php esc_html_e( 'Requires a valid Turnstile token before a submission is accepted. Needs a Turnstile secret key configured on your QNAAPI account first.', 'qnaapi-connect' ); ?>
+							</p>
+						</td>
+					</tr>
+				</table>
+
+				<h3><?php esc_html_e( 'Fields', 'qnaapi-connect' ); ?></h3>
+				<p class="description">
+					<?php esc_html_e( 'Single choice and Multiple choice fields need at least 2 options, one per line.', 'qnaapi-connect' ); ?>
+				</p>
+
+				<div id="qnaapi-connect-form-fields">
+					<?php echo $this->render_field_template( 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped literals below. ?>
+				</div>
+				<button type="button" class="button qnaapi-connect-add-field"><?php esc_html_e( '+ Add field', 'qnaapi-connect' ); ?></button>
+
+				<template id="qnaapi-connect-field-template">
+					<?php echo $this->render_field_template( '__INDEX__' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</template>
+
+				<?php submit_button( __( 'Create form', 'qnaapi-connect' ) ); ?>
+			</form>
+
+			<hr />
+
+			<h2><?php esc_html_e( 'Your forms', 'qnaapi-connect' ); ?></h2>
+			<?php $this->render_resource_table( $forms, 'form', 'qnaapi_form' ); ?>
+		</div>
+		<?php
+	}
+
+	private function render_field_template( $index ) {
+		ob_start();
+		?>
+		<fieldset class="qnaapi-connect-field">
+			<legend><?php esc_html_e( 'Field', 'qnaapi-connect' ); ?></legend>
+			<p>
+				<input
+					type="text"
+					name="fields[<?php echo esc_attr( $index ); ?>][label]"
+					class="regular-text"
+					placeholder="<?php esc_attr_e( 'Field label', 'qnaapi-connect' ); ?>"
+					required
+				/>
+			</p>
+			<p>
+				<select name="fields[<?php echo esc_attr( $index ); ?>][type]">
+					<?php foreach ( self::FIELD_TYPES as $value => $label ) : ?>
+						<option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<label>
+					<input type="checkbox" name="fields[<?php echo esc_attr( $index ); ?>][required]" value="1" checked />
+					<?php esc_html_e( 'Required', 'qnaapi-connect' ); ?>
+				</label>
+			</p>
+			<p>
+				<textarea
+					name="fields[<?php echo esc_attr( $index ); ?>][options]"
+					class="large-text code"
+					rows="3"
+					placeholder="<?php esc_attr_e( 'Options (one per line) — only used by Single/Multiple choice', 'qnaapi-connect' ); ?>"
+				></textarea>
+			</p>
+			<button type="button" class="button button-small button-link-delete qnaapi-connect-remove-field"><?php esc_html_e( 'Remove field', 'qnaapi-connect' ); ?></button>
+		</fieldset>
+		<?php
+		return ob_get_clean();
+	}
+
+	public function handle_create_form() {
+		$this->require_capability();
+		check_admin_referer( 'qnaapi_connect_create_form' );
+
+		$title         = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '';
+		$description   = isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '';
+		$raw_fields    = isset( $_POST['fields'] ) && is_array( $_POST['fields'] ) ? wp_unslash( $_POST['fields'] ) : array();
+
+		$fields = array();
+
+		foreach ( $raw_fields as $field ) {
+			$label = isset( $field['label'] ) ? sanitize_text_field( $field['label'] ) : '';
+			$type  = isset( $field['type'] ) ? sanitize_key( $field['type'] ) : '';
+
+			if ( '' === $label || ! array_key_exists( $type, self::FIELD_TYPES ) ) {
+				continue;
+			}
+
+			$parsed_field = array(
+				'label'    => $label,
+				'type'     => $type,
+				'required' => ! empty( $field['required'] ),
+			);
+
+			if ( in_array( $type, self::CHOICE_FIELD_TYPES, true ) && ! empty( $field['options'] ) ) {
+				$lines = preg_split( '/\r\n|\r|\n/', $field['options'] );
+				$parsed_field['options'] = array_values( array_filter( array_map( 'sanitize_text_field', array_map( 'trim', $lines ) ) ) );
+			}
+
+			$fields[] = $parsed_field;
+		}
+
+		$payload = array(
+			'title'  => $title,
+			'fields' => $fields,
+		);
+
+		if ( $description ) {
+			$payload['description'] = $description;
+		}
+
+		if ( $this->default_site_id() ) {
+			$payload['site_id'] = $this->default_site_id();
+		}
+
+		if ( ! empty( $_POST['requires_captcha'] ) ) {
+			$payload['requires_captcha'] = true;
+		}
+
+		$result = qnaapi_connect_client()->post( 'forms', $payload );
+
+		$this->redirect_after_create( 'qnaapi-connect-forms', $result );
+	}
+
+	/* ---------------------------------------------------------------
 	 * Shared: listing, deleting, notices
 	 * ------------------------------------------------------------- */
 
@@ -334,8 +518,14 @@ class QNAAPI_Connect_Resources_Admin {
 		$id   = isset( $_POST['resource_id'] ) ? absint( $_POST['resource_id'] ) : 0;
 		$redirect_page = isset( $_POST['redirect_page'] ) ? sanitize_key( wp_unslash( $_POST['redirect_page'] ) ) : 'qnaapi-connect';
 
-		if ( in_array( $type, array( 'poll', 'quiz' ), true ) && $id ) {
-			qnaapi_connect_client()->delete( ( 'poll' === $type ? 'polls/' : 'quizzes/' ) . $id );
+		$path_prefixes = array(
+			'poll' => 'polls/',
+			'quiz' => 'quizzes/',
+			'form' => 'forms/',
+		);
+
+		if ( isset( $path_prefixes[ $type ] ) && $id ) {
+			qnaapi_connect_client()->delete( $path_prefixes[ $type ] . $id );
 		}
 
 		wp_safe_redirect( admin_url( 'admin.php?page=' . $redirect_page ) );

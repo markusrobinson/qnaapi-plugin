@@ -1,12 +1,13 @@
 /**
- * Repeater UI for the "Create a poll" / "Create a quiz" admin screens.
- * Plain event delegation (no build step) so it works for rows added after
- * page load too.
+ * Repeater UI for the "Create a poll" / "Create a quiz" / "Create a form"
+ * admin screens. Plain event delegation (no build step) so it works for
+ * rows added after page load too.
  */
 ( function () {
 	'use strict';
 
 	var questionCounter = 1; // 0 is used by the first, PHP-rendered question.
+	var fieldCounter = 1; // 0 is used by the first, PHP-rendered field.
 
 	function closest( el, selector ) {
 		return el.closest ? el.closest( selector ) : null;
@@ -36,6 +37,15 @@
 		} else if ( target.classList.contains( 'qnaapi-connect-remove-choice' ) ) {
 			event.preventDefault();
 			removeRow( target, null );
+		} else if ( target.classList.contains( 'qnaapi-connect-add-field' ) ) {
+			event.preventDefault();
+			addFormField();
+		} else if ( target.classList.contains( 'qnaapi-connect-remove-field' ) ) {
+			event.preventDefault();
+			var fieldFieldset = closest( target, '.qnaapi-connect-field' );
+			if ( fieldFieldset ) {
+				fieldFieldset.remove();
+			}
 		}
 	} );
 
@@ -126,5 +136,22 @@
 		choicesContainer.appendChild( row );
 		choicesContainer.setAttribute( 'data-next-choice-index', String( choiceIndex + 1 ) );
 		row.querySelector( 'input[type="text"]' ).focus();
+	}
+
+	function addFormField() {
+		var template = document.getElementById( 'qnaapi-connect-field-template' );
+		var container = document.getElementById( 'qnaapi-connect-form-fields' );
+
+		if ( ! template || ! container ) {
+			return;
+		}
+
+		var html = template.innerHTML.split( '__INDEX__' ).join( String( fieldCounter ) );
+		fieldCounter += 1;
+
+		var wrapper = document.createElement( 'div' );
+		wrapper.innerHTML = html.trim();
+
+		container.appendChild( wrapper.firstElementChild );
 	}
 } )();

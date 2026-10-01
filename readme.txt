@@ -4,7 +4,7 @@ Tags: polls, quizzes, forms, surveys, api
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ QNAAPI Connect links your WordPress site to your [QNAAPI](https://qnaapi.com) ac
 
 **Features**
 
-* Create polls and quizzes on the fly from a dedicated wp-admin screen — no API calls to write yourself.
+* Create polls, quizzes, and forms/surveys on the fly from a dedicated wp-admin screen — no API calls to write yourself.
 * `[qnaapi_poll identifier="..."]`, `[qnaapi_quiz identifier="..."]`, and `[qnaapi_form identifier="..."]` shortcodes to embed any poll, quiz, or form/survey on your QNAAPI account.
 * Matching Gutenberg blocks (QNAAPI Poll, QNAAPI Quiz, QNAAPI Form) with a live editor preview.
 * Define audience traits (**QNAAPI → Traits**) — the attributes your polls, quizzes, and forms write to a respondent's profile.
@@ -34,7 +34,7 @@ This plugin is an independent client for the QNAAPI service and requires an acti
 
 1. Install and activate the plugin.
 2. Go to **QNAAPI → Settings** and paste in an API key from your QNAAPI dashboard's "API health & keys" page.
-3. Create a poll or quiz from **QNAAPI → Polls** or **QNAAPI → Quizzes**, or use the shortcode/block for a poll, quiz, or form you already created on qnaapi.com.
+3. Create a poll, quiz, or form from **QNAAPI → Polls**, **QNAAPI → Quizzes**, or **QNAAPI → Forms**, or use the shortcode/block for a resource you already created on qnaapi.com.
 4. Copy the shortcode shown next to the resource, or insert the matching block, into any post or page.
 
 == Frequently Asked Questions ==
@@ -42,10 +42,6 @@ This plugin is an independent client for the QNAAPI service and requires an acti
 = Does this work without a QNAAPI account? =
 
 No — you need an API key from a QNAAPI account to create or manage resources. Casting a vote, taking a quiz, or submitting a form doesn't require an account; that part is public and handled by your site's visitors.
-
-= Can I create forms/surveys from wp-admin too? =
-
-Not yet — forms/surveys are embeddable via the shortcode and block, but are currently created from the QNAAPI dashboard itself. On-the-fly form creation from wp-admin is planned.
 
 = Does voting/submitting go through my WordPress server? =
 
@@ -63,6 +59,9 @@ Not yet — you can define the trait itself from **QNAAPI → Traits**, but mapp
 
 == Changelog ==
 
+= 0.3.0 =
+* Add a Forms admin screen (**QNAAPI → Forms**) to create, list, and delete forms/surveys from wp-admin — matching the existing Polls/Quizzes screens.
+
 = 0.2.0 =
 * Add a Traits admin screen (**QNAAPI → Traits**) to create, list, and archive trait definitions.
 * Add a Profiles admin screen (**QNAAPI → Profiles**) to browse respondents and the traits computed for them.
@@ -72,6 +71,9 @@ Not yet — you can define the trait itself from **QNAAPI → Traits**, but mapp
 * Initial release: settings, poll/quiz creation, shortcodes, blocks, and a dashboard widget.
 
 == Upgrade Notice ==
+
+= 0.3.0 =
+Adds a Forms admin screen — no breaking changes.
 
 = 0.2.0 =
 Adds trait and profile management screens — no breaking changes.
