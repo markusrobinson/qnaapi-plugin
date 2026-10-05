@@ -159,16 +159,31 @@
 	 * On the AI Drafts screen's generate form, a poll is always exactly one
 	 * question, so the "Questions" field is meaningless (and confusing)
 	 * once Poll is selected — hide it instead of just noting that in the
-	 * field's description.
+	 * field's description, and force its value to 1 so a stale number
+	 * isn't silently submitted alongside type=poll. The previous value is
+	 * restored when switching back to Quiz.
 	 */
 	var qnaapiGenType = document.getElementById( 'qnaapi_gen_type' );
 
 	if ( qnaapiGenType ) {
+		var lastQuizQuestionCount = null;
+
 		var toggleQuestionCountRow = function () {
 			var row = document.getElementById( 'qnaapi-gen-question-count-row' );
+			var input = document.getElementById( 'qnaapi_gen_question_count' );
+			var isPoll = 'poll' === qnaapiGenType.value;
 
 			if ( row ) {
-				row.style.display = 'poll' === qnaapiGenType.value ? 'none' : '';
+				row.style.display = isPoll ? 'none' : '';
+			}
+
+			if ( input ) {
+				if ( isPoll ) {
+					lastQuizQuestionCount = input.value;
+					input.value = '1';
+				} else if ( lastQuizQuestionCount ) {
+					input.value = lastQuizQuestionCount;
+				}
 			}
 		};
 

@@ -125,7 +125,7 @@ class QNAAPI_Connect_Generation_Admin {
 		$article_url     = isset( $_POST['article_url'] ) ? esc_url_raw( wp_unslash( $_POST['article_url'] ) ) : '';
 		$article_text    = isset( $_POST['article_text'] ) ? sanitize_textarea_field( wp_unslash( $_POST['article_text'] ) ) : '';
 		$type            = isset( $_POST['type'] ) && 'poll' === $_POST['type'] ? 'poll' : 'quiz';
-		$question_count  = isset( $_POST['question_count'] ) ? max( 1, absint( $_POST['question_count'] ) ) : 5;
+		$question_count  = 'poll' === $type ? 1 : ( isset( $_POST['question_count'] ) ? max( 1, absint( $_POST['question_count'] ) ) : 5 );
 		$tone            = isset( $_POST['tone'] ) ? sanitize_text_field( wp_unslash( $_POST['tone'] ) ) : '';
 
 		$payload = array(
