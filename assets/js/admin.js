@@ -154,4 +154,25 @@
 
 		container.appendChild( wrapper.firstElementChild );
 	}
+
+	/**
+	 * On the AI Drafts screen's generate form, a poll is always exactly one
+	 * question, so the "Questions" field is meaningless (and confusing)
+	 * once Poll is selected — hide it instead of just noting that in the
+	 * field's description.
+	 */
+	var qnaapiGenType = document.getElementById( 'qnaapi_gen_type' );
+
+	if ( qnaapiGenType ) {
+		var toggleQuestionCountRow = function () {
+			var row = document.getElementById( 'qnaapi-gen-question-count-row' );
+
+			if ( row ) {
+				row.style.display = 'poll' === qnaapiGenType.value ? 'none' : '';
+			}
+		};
+
+		toggleQuestionCountRow();
+		qnaapiGenType.addEventListener( 'change', toggleQuestionCountRow );
+	}
 } )();

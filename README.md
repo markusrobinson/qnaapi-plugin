@@ -1,6 +1,6 @@
 # QNAAPI Connect
 
-A WordPress plugin that connects a site to a [QNAAPI](https://qnaapi.com) account: create polls and quizzes from wp-admin, embed polls, quizzes, and forms/surveys anywhere with a shortcode or Gutenberg block, define audience traits, and browse respondent profiles.
+A WordPress plugin that connects a site to a [QNAAPI](https://qnaapi.com) account: create polls and quizzes from wp-admin, embed polls, quizzes, and forms/surveys anywhere with a shortcode or Gutenberg block, define audience traits, browse respondent profiles, and generate a poll/quiz draft from an article with AI.
 
 See [`readme.txt`](readme.txt) for the WordPress.org-facing description, FAQ, and changelog — that file is the source of truth once this is submitted to the plugin directory.
 

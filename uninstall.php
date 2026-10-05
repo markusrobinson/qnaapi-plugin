@@ -10,6 +10,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 delete_option( 'qnaapi_connect_options' );
+delete_option( 'qnaapi_connect_tracked_jobs' );
 delete_transient( 'qnaapi_connect_dashboard_summary' );
 
 global $wpdb;

@@ -4,7 +4,7 @@ Tags: polls, quizzes, forms, surveys, api
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,7 @@ QNAAPI Connect links your WordPress site to your [QNAAPI](https://qnaapi.com) ac
 * Matching Gutenberg blocks (QNAAPI Poll, QNAAPI Quiz, QNAAPI Form) with a live editor preview.
 * Define audience traits (**QNAAPI → Traits**) — the attributes your polls, quizzes, and forms write to a respondent's profile.
 * Browse respondent profiles and their computed traits (**QNAAPI → Profiles**) without leaving wp-admin.
+* Generate a poll or quiz draft from an article with AI (**QNAAPI → AI Drafts**), then review and publish it (or reject it) — right from wp-admin.
 * A wp-admin dashboard widget showing live poll/quiz/form counts, total votes cast, traits defined, and respondent profiles.
 * Voting, quiz attempts, and form submissions are handled entirely client-side against QNAAPI's public endpoints — your API key never reaches visitors' browsers.
 
@@ -51,6 +52,14 @@ No. The plugin's PHP only fetches the poll/quiz/form's definition (using your AP
 
 Not yet — you can define the trait itself from **QNAAPI → Traits**, but mapping a specific option/choice/field (or a whole poll/quiz/form) to it is done from the QNAAPI dashboard. The **QNAAPI → Profiles** screen shows the resulting computed traits for each respondent.
 
+= Can I edit an AI-generated draft's questions before publishing? =
+
+Not from wp-admin yet — you can publish a draft as-is or reject it from **QNAAPI → AI Drafts**. To edit a draft's questions, options, or correct answers first, do that from the QNAAPI dashboard, then come back and publish it.
+
+= Does generating a draft cost me anything? =
+
+Generating uses one of your QNAAPI account's monthly AI generation credits (the allowance depends on your plan). Submitting the exact same article again reuses the earlier draft and doesn't use another credit. Trait-mapping suggestions and auto-publish require the Pro plan or above — on a lower plan, the draft still generates normally, just without those two extras.
+
 == Screenshots ==
 
 1. The Polls admin screen — create a poll and copy its shortcode.
@@ -58,6 +67,9 @@ Not yet — you can define the trait itself from **QNAAPI → Traits**, but mapp
 3. The QNAAPI Poll block in the editor.
 
 == Changelog ==
+
+= 0.4.0 =
+* Add an AI Drafts admin screen (**QNAAPI → AI Drafts**) to generate a poll/quiz draft from an article, track its generation job, and publish or reject the resulting draft.
 
 = 0.3.0 =
 * Add a Forms admin screen (**QNAAPI → Forms**) to create, list, and delete forms/surveys from wp-admin — matching the existing Polls/Quizzes screens.
@@ -71,6 +83,9 @@ Not yet — you can define the trait itself from **QNAAPI → Traits**, but mapp
 * Initial release: settings, poll/quiz creation, shortcodes, blocks, and a dashboard widget.
 
 == Upgrade Notice ==
+
+= 0.4.0 =
+Adds an AI Drafts admin screen — no breaking changes.
 
 = 0.3.0 =
 Adds a Forms admin screen — no breaking changes.
