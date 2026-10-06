@@ -106,6 +106,16 @@ class QNAAPI_Connect_Generation_Admin {
 							<p class="description"><?php esc_html_e( 'Requires the Pro plan or above on your QNAAPI account — ignored otherwise, with a notice shown below.', 'qnaapi-connect' ); ?></p>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Sensitive topics', 'qnaapi-connect' ); ?></th>
+						<td>
+							<label>
+								<input type="checkbox" name="check_sensitive_topics" value="1" checked="checked" />
+								<?php esc_html_e( 'Flag and skip generation for sensitive subject matter', 'qnaapi-connect' ); ?>
+							</label>
+							<p class="description"><?php esc_html_e( 'On by default. Uncheck to generate regardless of subject matter — the job will never come back flagged for topic (an ungrounded question or low confidence can still flag it).', 'qnaapi-connect' ); ?></p>
+						</td>
+					</tr>
 				</table>
 				<?php submit_button( __( 'Generate', 'qnaapi-connect' ) ); ?>
 			</form>
@@ -145,6 +155,10 @@ class QNAAPI_Connect_Generation_Admin {
 
 		if ( ! empty( $_POST['auto_publish'] ) ) {
 			$payload['auto_publish'] = true;
+		}
+
+		if ( empty( $_POST['check_sensitive_topics'] ) ) {
+			$payload['check_sensitive_topics'] = false;
 		}
 
 		$result = qnaapi_connect_client()->post( 'generate', $payload );

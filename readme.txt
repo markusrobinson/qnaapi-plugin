@@ -4,7 +4,7 @@ Tags: polls, quizzes, forms, surveys, api
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,10 @@ Not from wp-admin yet — you can publish a draft as-is or reject it from **QNAA
 
 Generating uses one of your QNAAPI account's monthly AI generation credits (the allowance depends on your plan). Submitting the exact same article again reuses the earlier draft and doesn't use another credit. Trait-mapping suggestions and auto-publish require the Pro plan or above — on a lower plan, the draft still generates normally, just without those two extras.
 
+= Can I generate a draft about a sensitive topic? =
+
+By default, an article that's substantially about a tragedy, an active/unresolved crime, suicide or self-harm, sexual assault or abuse, an active election, or a health crisis affecting real identifiable people is flagged instead of generated. Uncheck "Sensitive topics" on the generate form if you want a draft anyway — the job will never be flagged for subject matter, though an ungrounded question or low confidence can still flag it.
+
 == Screenshots ==
 
 1. The Polls admin screen — create a poll and copy its shortcode.
@@ -67,6 +71,9 @@ Generating uses one of your QNAAPI account's monthly AI generation credits (the 
 3. The QNAAPI Poll block in the editor.
 
 == Changelog ==
+
+= 0.5.0 =
+* Add a "Sensitive topics" checkbox to the AI Drafts generate form (checked by default) — uncheck it to generate a draft regardless of subject matter instead of having the job flagged.
 
 = 0.4.0 =
 * Add an AI Drafts admin screen (**QNAAPI → AI Drafts**) to generate a poll/quiz draft from an article, track its generation job, and publish or reject the resulting draft.
@@ -83,6 +90,9 @@ Generating uses one of your QNAAPI account's monthly AI generation credits (the 
 * Initial release: settings, poll/quiz creation, shortcodes, blocks, and a dashboard widget.
 
 == Upgrade Notice ==
+
+= 0.5.0 =
+Adds a "Sensitive topics" checkbox to the AI Drafts generate form — no breaking changes.
 
 = 0.4.0 =
 Adds an AI Drafts admin screen — no breaking changes.
